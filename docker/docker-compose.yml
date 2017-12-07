@@ -1,0 +1,46 @@
+#apache:
+#  image: tutum/apache-php
+#  ports:
+#    - "80:80"
+#    - "443:443"
+#  volumes:
+#    - /var/www:/var/www
+#    - /var/www/docker/php.ini:/etc/php5/apache2/conf.d/30-custom.ini
+#    - /var/www/docker/sites:/etc/apache2/sites-enabled
+#  environment:
+#    - ALLOW_OVERRIDE=true
+#  links:
+#    - db:db
+#    - maildev:maildev
+
+apache:
+  image: webdevops/php-apache-dev:7.1
+  ports:
+    - "80:80"
+  volumes:
+    - /var/www:/var/www
+    - /var/www/docker/sites:/opt/docker/etc/httpd/vhost.common.d
+  links:
+    - db:db
+    - maildev:maildev
+  environment:
+    - ALLOW_OVERRIDE=true
+
+db:
+  image: mysql
+  volumes:
+    - /var/lib/boot2docker/mysql:/var/lib/mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=root
+
+pma:
+  image: phpmyadmin/phpmyadmin
+  ports:
+    - "8080:80"
+  links:
+    - db:db
+
+maildev:
+  image: djfarrelly/maildev
+  ports:
+    - "1080:80"
